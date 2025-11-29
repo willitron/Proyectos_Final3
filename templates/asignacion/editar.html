@@ -1,0 +1,26 @@
+{%extends "base.html" %}
+
+{%block title %}Editar Asignacion - Instituto Ballivián{%endblock %}
+{%block page_title %}Editar Asignacion{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>Editar Asignacion</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <!-- Agregar campos del formulario aquí -->
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{url_for('asignacion.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Actualizar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{%endblock %}

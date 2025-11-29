@@ -1,0 +1,25 @@
+{%extends "base.html" %}
+
+{%block title %}Detalle Persona - Instituto Ballivián{%endblock %}
+{%block page_title %}Detalle de Persona{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Información de Persona</h5>
+        <div>
+            {%if current_user.tiene_permiso('editar_persona') %}
+            <a href="{{url_for('persona.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            {%endif %}
+            <a href="{{url_for('persona.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Agregar detalles aquí -->
+    </div>
+</div>
+{%endblock %}

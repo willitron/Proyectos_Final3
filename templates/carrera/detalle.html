@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle Carrera - Instituto Ballivián{% endblock %}
+{% block page_title %}Detalle de Carrera{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>{{ carrera.nombre }}</h5>
+        <div>
+            {% if current_user.tiene_permiso('editar_carrera') %}
+            <a href="{{ url_for('carrera.editar', id=carrera.id) }}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            {% endif %}
+            <a href="{{ url_for('carrera.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Código:</th>
+                        <td>{{ carrera.codigo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre:</th>
+                        <td>{{ carrera.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo:</th>
+                        <td><span class="badge bg-info">{{ carrera.tipo }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            {% if carrera.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Carga Horaria:</th>
+                        <td>{{ carrera.carga_horaria }} horas</td>
+                    </tr>
+                    <tr>
+                        <th>Créditos:</th>
+                        <td>{{ carrera.creditos }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Creación:</th>
+                        <td>{{ carrera.fecha_creacion|format_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Registrado:</th>
+                        <td>{{ carrera.created_at|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if carrera.descripcion %}
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6>Descripción:</h6>
+                <p>{{ carrera.descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h6>Materias Asociadas</h6>
+                {% if carrera.materias %}
+                <ul class="list-group">
+                    {% for materia in carrera.materias %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ materia.nombre }}
+                        <span class="badge bg-primary">{{ materia.codigo }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No hay materias asociadas a esta carrera.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

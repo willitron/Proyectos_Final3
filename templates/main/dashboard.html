@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Instituto Ballivián{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="alert alert-info">
+            <h4>Bienvenido, {{ current_user.username }}!</h4>
+            <p class="mb-0">Roles: 
+                {% for rol in current_user.roles %}
+                    <span class="badge bg-primary">{{ rol.nombre }}</span>
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if current_user.tiene_permiso('ver_carreras') %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-mortarboard"></i> Carreras</h5>
+                <h2>{{ stats.total_carreras }}</h2>
+                <p class="card-text">Total de carreras activas</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_estudiantes') %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-badge"></i> Estudiantes</h5>
+                <h2>{{ stats.total_estudiantes }}</h2>
+                <p class="card-text">Total de estudiantes</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_docentes') %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-workspace"></i> Docentes</h5>
+                <h2>{{ stats.total_docentes }}</h2>
+                <p class="card-text">Total de docentes</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_materias') %}
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-book"></i> Materias</h5>
+                <h2>{{ stats.total_materias }}</h2>
+                <p class="card-text">Total de materias</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% if current_user.tiene_permiso('ver_inscripciones') %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Inscripciones</h5>
+                <h2>{{ stats.total_inscripciones }}</h2>
+                <p class="card-text">Total de inscripciones registradas</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_asignaciones') %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Asignaciones</h5>
+                <h2>{{ stats.total_asignaciones }}</h2>
+                <p class="card-text">Total de asignaciones activas</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if current_user.tiene_permiso('ver_carreras') %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-list-ul"></i> Carreras Recientes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for carrera in carreras %}
+                            <tr>
+                                <td>{{ carrera.codigo }}</td>
+                                <td>{{ carrera.nombre }}</td>
+                                <td><span class="badge bg-info">{{ carrera.tipo }}</span></td>
+                                <td>
+                                    {% if carrera.activo %}
+                                        <span class="badge bg-success">Activo</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('carrera.detalle', id=carrera.id) }}" class="btn btn-sm btn-info">Ver</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

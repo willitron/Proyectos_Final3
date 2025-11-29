@@ -1,0 +1,46 @@
+{%extends "base.html" %}
+
+{%block title %}Crear Docente - Instituto Ballivián{%endblock %}
+{%block page_title %}Nuevo/a Docente{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>Crear Nuevo/a Docente</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            
+            <div class="mb-3">
+                <label for="persona_id" class="form-label">Persona Id</label>
+                <input type="text" class="form-control" id="persona_id" name="persona_id">
+            </div>
+            <div class="mb-3">
+                <label for="codigo_docente" class="form-label">Codigo Docente</label>
+                <input type="text" class="form-control" id="codigo_docente" name="codigo_docente">
+            </div>
+            <div class="mb-3">
+                <label for="grado_academico" class="form-label">Grado Academico</label>
+                <input type="text" class="form-control" id="grado_academico" name="grado_academico">
+            </div>
+            <div class="mb-3">
+                <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
+                <input type="text" class="form-control" id="fecha_ingreso" name="fecha_ingreso">
+            </div>
+            <div class="mb-3">
+                <label for="fecha_nacimiento" class="form-label">Fecha Nacimiento</label>
+                <input type="text" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{url_for('docente.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{%endblock %}

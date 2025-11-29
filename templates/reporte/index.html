@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - Instituto Ballivián{% endblock %}
+{% block page_title %}Centro de Reportes{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="alert alert-info">
+            <h5><i class="bi bi-info-circle"></i> Sistema de Reportes PDF</h5>
+            <p class="mb-0">Genera reportes profesionales en formato PDF con el logo institucional y toda la información necesaria.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if current_user.tiene_permiso('ver_estudiantes') %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-primary text-white p-3 me-3">
+                        <i class="bi bi-person-badge fs-4"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Reporte de Estudiantes</h5>
+                </div>
+                <p class="card-text">Genera listado completo de estudiantes con filtros por carrera y estado.</p>
+                <a href="{{ url_for('reporte.reporte_estudiantes') }}" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-pdf"></i> Generar Reporte
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_docentes') %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-success text-white p-3 me-3">
+                        <i class="bi bi-person-workspace fs-4"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Reporte de Docentes</h5>
+                </div>
+                <p class="card-text">Listado de docentes activos con sus asignaciones de materias.</p>
+                <a href="{{ url_for('reporte.reporte_docentes') }}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-pdf"></i> Generar Reporte
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_carreras') %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-info text-white p-3 me-3">
+                        <i class="bi bi-mortarboard fs-4"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Reporte de Carreras</h5>
+                </div>
+                <p class="card-text">Información de carreras con estadísticas de estudiantes y materias.</p>
+                <a href="{{ url_for('reporte.reporte_carreras') }}" class="btn btn-info">
+                    <i class="bi bi-file-earmark-pdf"></i> Generar Reporte
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_inscripciones') %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-warning text-dark p-3 me-3">
+                        <i class="bi bi-file-earmark-text fs-4"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Reporte de Inscripciones</h5>
+                </div>
+                <p class="card-text">Listado de inscripciones por gestión con estados y fechas.</p>
+                <form method="GET" action="{{ url_for('reporte.reporte_inscripciones') }}" class="mb-2">
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="gestion" placeholder="Año" value="{{ current_year }}">
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-file-earmark-pdf"></i> Generar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if current_user.tiene_permiso('ver_notas') or current_user.estudiante_id %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="rounded-circle bg-danger text-white p-3 me-3">
+                        <i class="bi bi-clipboard-data fs-4"></i>
+                    </div>
+                    <h5 class="card-title mb-0">Certificado de Notas</h5>
+                </div>
+                <p class="card-text">Genera certificado oficial de calificaciones del estudiante.</p>
+                {% if current_user.estudiante_id %}
+                    {% set inscripcion = current_user.estudiante.inscripciones[0] if current_user.estudiante.inscripciones else None %}
+                    {% if inscripcion %}
+                    <a href="{{ url_for('reporte.reporte_notas_estudiante', inscripcion_id=inscripcion.id) }}" class="btn btn-danger">
+                        <i class="bi bi-file-earmark-pdf"></i> Mis Notas
+                    </a>
+                    {% else %}
+                    <button class="btn btn-secondary" disabled>Sin Inscripciones</button>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('inscripcion.index') }}" class="btn btn-danger">
+                        <i class="bi bi-search"></i> Buscar Estudiante
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información sobre Reportes</h5>
+            </div>
+            <div class="card-body">
+                <h6>Características de los Reportes PDF:</h6>
+                <ul>
+                    <li><i class="bi bi-check-circle text-success"></i> Logo institucional en cada página</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Encabezado y pie de página profesional</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Información del usuario que genera el reporte</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Fecha y hora de generación</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Numeración de páginas automática</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Tablas organizadas y estilos profesionales</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Secciones de firma para validación</li>
+                    <li><i class="bi bi-check-circle text-success"></i> Resúmenes y estadísticas incluidas</li>
+                </ul>
+                
+                <h6 class="mt-3">Permisos Requeridos:</h6>
+                <p>Cada reporte requiere los permisos correspondientes para acceder a la información. Los reportes se generan según el rol del usuario:</p>
+                <ul>
+                    <li><span class="badge bg-primary">Administrador</span> - Acceso a todos los reportes</li>
+                    <li><span class="badge bg-info">Secretaria</span> - Estudiantes, inscripciones y carreras</li>
+                    <li><span class="badge bg-success">Docente</span> - Notas y asignaciones</li>
+                    <li><span class="badge bg-warning">Estudiante</span> - Solo sus propias notas</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Agregar año actual
+    document.addEventListener('DOMContentLoaded', function() {
+        const yearInputs = document.querySelectorAll('input[name="gestion"]');
+        yearInputs.forEach(input => {
+            if (!input.value) {
+                input.value = new Date().getFullYear();
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{%extends "base.html" %}
+
+{%block title %}Detalle Docente - Instituto Ballivián{%endblock %}
+{%block page_title %}Detalle de Docente{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Información de Docente</h5>
+        <div>
+            {%if current_user.tiene_permiso('editar_docente') %}
+            <a href="{{url_for('docente.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            {%endif %}
+            <a href="{{url_for('docente.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Agregar detalles aquí -->
+    </div>
+</div>
+{%endblock %}

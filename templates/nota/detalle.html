@@ -1,0 +1,25 @@
+{%extends "base.html" %}
+
+{%block title %}Detalle Nota - Instituto Ballivián{%endblock %}
+{%block page_title %}Detalle de Nota{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Información de Nota</h5>
+        <div>
+            {%if current_user.tiene_permiso('editar_nota') %}
+            <a href="{{url_for('nota.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            {%endif %}
+            <a href="{{url_for('nota.index') }}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- Agregar detalles aquí -->
+    </div>
+</div>
+{%endblock %}

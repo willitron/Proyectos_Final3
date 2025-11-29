@@ -1,0 +1,46 @@
+{%extends "base.html" %}
+
+{%block title %}Crear Materia - Instituto Ballivián{%endblock %}
+{%block page_title %}Nuevo/a Materia{%endblock %}
+
+{%block content %}
+<div class="card">
+    <div class="card-header">
+        <h5>Crear Nuevo/a Materia</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            
+            <div class="mb-3">
+                <label for="codigo" class="form-label">Codigo</label>
+                <input type="text" class="form-control" id="codigo" name="codigo">
+            </div>
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre">
+            </div>
+            <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripcion</label>
+                <input type="text" class="form-control" id="descripcion" name="descripcion">
+            </div>
+            <div class="mb-3">
+                <label for="carga_horaria" class="form-label">Carga Horaria</label>
+                <input type="text" class="form-control" id="carga_horaria" name="carga_horaria">
+            </div>
+            <div class="mb-3">
+                <label for="horas_teoricas" class="form-label">Horas Teoricas</label>
+                <input type="text" class="form-control" id="horas_teoricas" name="horas_teoricas">
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{url_for('materia.index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{%endblock %}
