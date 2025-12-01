@@ -1,26 +1,66 @@
-{%extends "base.html" %}
-
-{%block title %}Editar Inscripcion - Instituto Ballivián{%endblock %}
-{%block page_title %}Editar Inscripcion{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Editar Inscripción{% endblock %}
+{% block page_title %}Editar Inscripción{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Editar Inscripcion</h5>
+        <h5>Editar Inscripción</h5>
     </div>
     <div class="card-body">
         <form method="POST">
-            <!-- Agregar campos del formulario aquí -->
-            
-            <div class="d-flex justify-content-between">
-                <a href="{{url_for('inscripcion.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Actualizar
-                </button>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label for="estudiante_id" class="form-label">Estudiante *</label><select
+                        class="form-select" id="estudiante_id" name="estudiante_id" required>
+                        <option value="">Seleccionar estudiante</option>{% for estudiante in estudiantes %}<option
+                            value="{{ estudiante.id }}" {% if inscripcion.estudiante_id==estudiante.id %}selected{%
+                            endif %}>{{ estudiante.persona.nombre_completo }}</option>{% endfor %}
+                    </select></div>
+                <div class="col-md-6 mb-3"><label for="carrera_id" class="form-label">Carrera *</label><select
+                        class="form-select" id="carrera_id" name="carrera_id" required>
+                        <option value="">Seleccionar carrera</option>{% for carrera in carreras %}<option
+                            value="{{ carrera.id }}" {% if inscripcion.carrera_id==carrera.id %}selected{% endif %}>{{
+                            carrera.nombre }}</option>{% endfor %}
+                    </select></div>
             </div>
+            <div class="row">
+                <div class="col-md-4 mb-3"><label for="gestion" class="form-label">Gestión *</label><input type="number"
+                        class="form-control" id="gestion" name="gestion" value="{{ inscripcion.gestion }}" required>
+                </div>
+                <div class="col-md-4 mb-3"><label for="periodo" class="form-label">Periodo *</label><select
+                        class="form-select" id="periodo" name="periodo" required>
+                        <option value="I" {% if inscripcion.periodo=='I' %}selected{% endif %}>Periodo I</option>
+                        <option value="II" {% if inscripcion.periodo=='II' %}selected{% endif %}>Periodo II</option>
+                        <option value="III" {% if inscripcion.periodo=='III' %}selected{% endif %}>Periodo III</option>
+                        <option value="Cuatrimestral" {% if inscripcion.periodo=='Cuatrimestral' %}selected{% endif %}>
+                            Cuatrimestral</option>
+                        <option value="Anual" {% if inscripcion.periodo=='Anual' %}selected{% endif %}>Anual</option>
+                    </select></div>
+                <div class="col-md-4 mb-3"><label for="estado" class="form-label">Estado</label><select
+                        class="form-select" id="estado" name="estado">
+                        <option value="Preinscrito" {% if inscripcion.estado=='Preinscrito' %}selected{% endif %}>
+                            Preinscrito</option>
+                        <option value="Matriculado" {% if inscripcion.estado=='Matriculado' %}selected{% endif %}>
+                            Matriculado</option>
+                        <option value="Rechazado" {% if inscripcion.estado=='Rechazado' %}selected{% endif %}>Rechazado
+                        </option>
+                        <option value="Anulado" {% if inscripcion.estado=='Anulado' %}selected{% endif %}>Anulado
+                        </option>
+                    </select></div>
+            </div>
+            <div class="mb-3"><label for="metodo_ingreso" class="form-label">Método de Ingreso</label><select
+                    class="form-select" id="metodo_ingreso" name="metodo_ingreso">
+                    <option value="Regular" {% if inscripcion.metodo_ingreso=='Regular' %}selected{% endif %}>Regular
+                    </option>
+                    <option value="Traslado" {% if inscripcion.metodo_ingreso=='Traslado' %}selected{% endif %}>Traslado
+                    </option>
+                    <option value="Admitido" {% if inscripcion.metodo_ingreso=='Admitido' %}selected{% endif %}>Admitido
+                    </option>
+                    <option value="Otro" {% if inscripcion.metodo_ingreso=='Otro' %}selected{% endif %}>Otro</option>
+                </select></div>
+            <div class="d-flex justify-content-between"><a href="{{ url_for('inscripcion.index') }}"
+                    class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a><button type="submit"
+                    class="btn btn-primary"><i class="bi bi-save"></i> Actualizar</button></div>
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

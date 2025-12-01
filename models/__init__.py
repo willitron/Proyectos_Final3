@@ -5,7 +5,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
-# Tablas de asociación
 usuario_rol = db.Table('usuario_rol',
     db.Column('usuario_id', db.Integer, db.ForeignKey('usuario.id'), primary_key=True),
     db.Column('rol_id', db.Integer, db.ForeignKey('rol.id'), primary_key=True),

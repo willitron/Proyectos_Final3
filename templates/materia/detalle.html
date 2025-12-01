@@ -1,25 +1,89 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Detalle Materia - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Materia{%endblock %}
+{% block title %}Detalle Materia - Instituto Ballivián{% endblock %}
+{% block page_title %}Detalle de Materia{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Materia</h5>
+        <h5>{{ materia.nombre }}</h5>
         <div>
-            {%if current_user.tiene_permiso('editar_materia') %}
-            <a href="{{url_for('materia.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+            {% if current_user.tiene_permiso('editar_materia') %}
+            <a href="{{ url_for('materia.editar', id=materia.id) }}" class="btn btn-warning btn-sm">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            {%endif %}
-            <a href="{{url_for('materia.index') }}" class="btn btn-secondary btn-sm">
+            {% endif %}
+            <a href="{{ url_for('materia.index') }}" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Código:</th>
+                        <td>{{ materia.codigo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre:</th>
+                        <td>{{ materia.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Carrera:</th>
+                        <td>{{ materia.carrera.nombre if materia.carrera else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Semestre:</th>
+                        <td>{{ materia.semestre if materia.semestre else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            {% if materia.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Carga Horaria:</th>
+                        <td>{{ materia.carga_horaria }} horas</td>
+                    </tr>
+                    <tr>
+                        <th>Horas Teóricas:</th>
+                        <td>{{ materia.horas_teoricas }} horas</td>
+                    </tr>
+                    <tr>
+                        <th>Horas Prácticas:</th>
+                        <td>{{ materia.horas_practicas }} horas</td>
+                    </tr>
+                    <tr>
+                        <th>Créditos:</th>
+                        <td>{{ materia.creditos }}</td>
+                    </tr>
+                    <tr>
+                        <th>Registrado:</th>
+                        <td>{{ materia.created_at|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if materia.descripcion %}
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6>Descripción:</h6>
+                <p>{{ materia.descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

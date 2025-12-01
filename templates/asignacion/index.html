@@ -1,16 +1,16 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Asignacion - Instituto Ballivián{%endblock %}
-{%block page_title %}Gestión de Asignacion{%endblock %}
+{% block title %}Asignaciones - Instituto Ballivián{% endblock %}
+{% block page_title %}Gestión de Asignaciones{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Listado de Asignacion</h4>
-    {%if current_user.tiene_permiso('crear_asignacion') %}
-    <a href="{{url_for('asignacion.crear') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Nuevo/a
+    <h4>Listado de Asignaciones</h4>
+    {% if current_user.tiene_permiso('crear_asignacion') %}
+    <a href="{{ url_for('asignacion.crear') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Asignación
     </a>
-    {%endif %}
+    {% endif %}
 </div>
 
 <div class="card">
@@ -19,46 +19,92 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Información</th>
-                        <th>Estado</th>
+                        <th>Materia</th>
+                        <th>Docente</th>
+                        <th>Carrera</th>
+                        <th>Gestión</th>
+                        <th>Periodo</th>
+                        <th>Grupo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {%for item in asignaciones.items %}
+                    {% for asignacion in asignaciones.items %}
                     <tr>
-                        <td>{{item.id}}</td>
-                        <td>{{item}}</td>
-                        <td><span class="badge bg-success">Activo</span></td>
+                        <td>{{ asignacion.materia.nombre }}</td>
+                        <td>{{ asignacion.docente.persona.nombre_completo }}</td>
+                        <td>{{ asignacion.carrera.nombre if asignacion.carrera else 'N/A' }}</td>
+                        <td>{{ asignacion.gestion }}</td>
+                        <td><span class="badge bg-info">{{ asignacion.periodo }}</span></td>
+                        <td>{{ asignacion.codigo_grupo or 'N/A' }}</td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{url_for('asignacion.detalle', id=item.id) }}" class="btn btn-info">
+                                <a href="{{ url_for('asignacion.detalle', id=asignacion.id) }}" class="btn btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                {%if current_user.tiene_permiso('editar_asignacion') %}
-                                <a href="{{url_for('asignacion.editar', id=item.id) }}" class="btn btn-warning">
+                                {% if current_user.tiene_permiso('editar_asignacion') %}
+                                <a href="{{ url_for('asignacion.editar', id=asignacion.id) }}" class="btn btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                {%endif %}
-                                {%if current_user.tiene_permiso('eliminar_asignacion') %}
-                                <form method="POST" action="{{url_for('asignacion.eliminar', id=item.id) }}" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                                {%endif %}
+                                {% endif %}
+                                {% if current_user.tiene_permiso('eliminar_asignacion') %}
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ asignacion.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="modal fade" id="deleteModal{{ asignacion.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Está seguro de eliminar esta asignación?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form method="POST" action="{{ url_for('asignacion.eliminar', id=asignacion.id) }}">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
-                    {%else %}
+                    {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">No hay registros</td>
+                        <td colspan="7" class="text-center">No hay asignaciones registradas</td>
                     </tr>
-                    {%endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        {% if asignaciones.pages > 1 %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if not asignaciones.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('asignacion.index', page=asignaciones.prev_num) }}">Anterior</a>
+                </li>
+                {% for page_num in asignaciones.iter_pages() %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == asignaciones.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('asignacion.index', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not asignaciones.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('asignacion.index', page=asignaciones.next_num) }}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

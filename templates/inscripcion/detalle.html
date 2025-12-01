@@ -1,25 +1,70 @@
-{%extends "base.html" %}
-
-{%block title %}Detalle Inscripcion - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Inscripcion{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Detalle Inscripción{% endblock %}
+{% block page_title %}Información de Inscripción{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Inscripcion</h5>
-        <div>
-            {%if current_user.tiene_permiso('editar_inscripcion') %}
-            <a href="{{url_for('inscripcion.editar', id=item.id) }}" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            {%endif %}
-            <a href="{{url_for('inscripcion.index') }}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-        </div>
+        <h5>Inscripción #{{ inscripcion.id }}</h5>
+        <div>{% if current_user.tiene_permiso('ver_notas') or (current_user.estudiante_id and current_user.estudiante_id
+            == inscripcion.estudiante_id) %}<a
+                href="{{ url_for('reporte.reporte_notas_estudiante', inscripcion_id=inscripcion.id) }}"
+                class="btn btn-success btn-sm"><i class="bi bi-file-earmark-pdf"></i> Certificado de Notas</a>{% endif
+            %}{% if current_user.tiene_permiso('editar_inscripcion') %}<a
+                href="{{ url_for('inscripcion.editar', id=inscripcion.id) }}" class="btn btn-warning btn-sm"><i
+                    class="bi bi-pencil"></i> Editar</a>{% endif %}<a href="{{ url_for('inscripcion.index') }}"
+                class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a></div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Información del Estudiante</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Estudiante:</th>
+                        <td>{{ inscripcion.estudiante.persona.nombre_completo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Código:</th>
+                        <td>{{ inscripcion.estudiante.codigo_estudiante }}</td>
+                    </tr>
+                    <tr>
+                        <th>CI:</th>
+                        <td>{{ inscripcion.estudiante.persona.nro_documento }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Información Académica</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Carrera:</th>
+                        <td>{{ inscripcion.carrera.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gestión:</th>
+                        <td>{{ inscripcion.gestion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Periodo:</th>
+                        <td><span class="badge bg-info">{{ inscripcion.periodo }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td><span
+                                class="badge bg-{% if inscripcion.estado == 'Matriculado' %}success{% elif inscripcion.estado == 'Preinscrito' %}warning{% else %}secondary{% endif %}">{{
+                                inscripcion.estado }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Método Ingreso:</th>
+                        <td>{{ inscripcion.metodo_ingreso }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Inscripción:</th>
+                        <td>{{ inscripcion.fecha_inscripcion|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

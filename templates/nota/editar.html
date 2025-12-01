@@ -1,26 +1,53 @@
-{%extends "base.html" %}
-
-{%block title %}Editar Nota - Instituto Ballivián{%endblock %}
-{%block page_title %}Editar Nota{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Editar Nota{% endblock %}
+{% block page_title %}Editar Nota{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header">
         <h5>Editar Nota</h5>
     </div>
     <div class="card-body">
         <form method="POST">
-            <!-- Agregar campos del formulario aquí -->
-            
-            <div class="d-flex justify-content-between">
-                <a href="{{url_for('nota.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Cancelar
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Actualizar
-                </button>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label for="inscripcion_id" class="form-label">Inscripción *</label><select
+                        class="form-select" id="inscripcion_id" name="inscripcion_id" required>{% for inscripcion in
+                        inscripciones %}<option value="{{ inscripcion.id }}" {% if nota.inscripcion_id==inscripcion.id
+                            %}selected{% endif %}>{{ inscripcion.estudiante.persona.nombre_completo }}</option>{% endfor
+                        %}</select></div>
+                <div class="col-md-6 mb-3"><label for="asignacion_id" class="form-label">Asignación *</label><select
+                        class="form-select" id="asignacion_id" name="asignacion_id" required>{% for asignacion in
+                        asignaciones %}<option value="{{ asignacion.id }}" {% if nota.asignacion_id==asignacion.id
+                            %}selected{% endif %}>{{ asignacion.materia.nombre }}</option>{% endfor %}</select></div>
             </div>
+            <div class="row">
+                <div class="col-md-3 mb-3"><label for="primer_parcial" class="form-label">1er Parcial</label><input
+                        type="number" class="form-control" id="primer_parcial" name="primer_parcial"
+                        value="{{ nota.primer_parcial }}" min="0" max="100" step="0.01"></div>
+                <div class="col-md-3 mb-3"><label for="segundo_parcial" class="form-label">2do Parcial</label><input
+                        type="number" class="form-control" id="segundo_parcial" name="segundo_parcial"
+                        value="{{ nota.segundo_parcial }}" min="0" max="100" step="0.01"></div>
+                <div class="col-md-3 mb-3"><label for="tercer_parcial" class="form-label">3er Parcial</label><input
+                        type="number" class="form-control" id="tercer_parcial" name="tercer_parcial"
+                        value="{{ nota.tercer_parcial }}" min="0" max="100" step="0.01"></div>
+                <div class="col-md-3 mb-3"><label for="nota_final" class="form-label">Nota Final</label><input
+                        type="number" class="form-control" id="nota_final" name="nota_final"
+                        value="{{ nota.nota_final }}" min="0" max="100" step="0.01"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3"><label for="estado" class="form-label">Estado</label><select
+                        class="form-select" id="estado" name="estado">
+                        <option value="Abierto" {% if nota.estado=='Abierto' %}selected{% endif %}>Abierto</option>
+                        <option value="Cerrado" {% if nota.estado=='Cerrado' %}selected{% endif %}>Cerrado</option>
+                        <option value="Revisado" {% if nota.estado=='Revisado' %}selected{% endif %}>Revisado</option>
+                    </select></div>
+                <div class="col-md-6 mb-3"><label for="observaciones" class="form-label">Observaciones</label><textarea
+                        class="form-control" id="observaciones" name="observaciones"
+                        rows="2">{{ nota.observaciones }}</textarea></div>
+            </div>
+            <div class="d-flex justify-content-between"><a href="{{ url_for('nota.index') }}"
+                    class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Cancelar</a><button type="submit"
+                    class="btn btn-primary"><i class="bi bi-save"></i> Actualizar</button></div>
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

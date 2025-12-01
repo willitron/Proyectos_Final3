@@ -1,39 +1,89 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Crear Asignacion - Instituto Ballivián{%endblock %}
-{%block page_title %}Nuevo/a Asignacion{%endblock %}
+{% block title %}Crear Asignación - Instituto Ballivián{% endblock %}
+{% block page_title %}Nueva Asignación{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Crear Nuevo/a Asignacion</h5>
+        <h5>Crear Nueva Asignación</h5>
     </div>
     <div class="card-body">
         <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="materia_id" class="form-label">Materia *</label>
+                    <select class="form-select" id="materia_id" name="materia_id" required>
+                        <option value="">Seleccionar materia</option>
+                        {% for materia in materias %}
+                        <option value="{{ materia.id }}">{{ materia.nombre }} ({{ materia.codigo }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="docente_id" class="form-label">Docente *</label>
+                    <select class="form-select" id="docente_id" name="docente_id" required>
+                        <option value="">Seleccionar docente</option>
+                        {% for docente in docentes %}
+                        <option value="{{ docente.id }}">{{ docente.persona.nombre_completo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
             
             <div class="mb-3">
-                <label for="materia_id" class="form-label">Materia Id</label>
-                <input type="text" class="form-control" id="materia_id" name="materia_id">
+                <label for="carrera_id" class="form-label">Carrera</label>
+                <select class="form-select" id="carrera_id" name="carrera_id">
+                    <option value="">Seleccionar carrera (opcional)</option>
+                    {% for carrera in carreras %}
+                    <option value="{{ carrera.id }}">{{ carrera.nombre }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="mb-3">
-                <label for="docente_id" class="form-label">Docente Id</label>
-                <input type="text" class="form-control" id="docente_id" name="docente_id">
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="gestion" class="form-label">Gestión *</label>
+                    <input type="number" class="form-control" id="gestion" name="gestion" min="2000" max="2100" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="periodo" class="form-label">Periodo *</label>
+                    <select class="form-select" id="periodo" name="periodo" required>
+                        <option value="I">Periodo I</option>
+                        <option value="II">Periodo II</option>
+                        <option value="III">Periodo III</option>
+                        <option value="Cuatrimestral">Cuatrimestral</option>
+                        <option value="Anual">Anual</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="codigo_grupo" class="form-label">Código de Grupo</label>
+                    <input type="text" class="form-control" id="codigo_grupo" name="codigo_grupo">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="carrera_id" class="form-label">Carrera Id</label>
-                <input type="text" class="form-control" id="carrera_id" name="carrera_id">
+            
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="tipo_imparticion" class="form-label">Tipo de Impartición</label>
+                    <select class="form-select" id="tipo_imparticion" name="tipo_imparticion">
+                        <option value="Presencial" selected>Presencial</option>
+                        <option value="Virtual">Virtual</option>
+                        <option value="Hibrido">Híbrido</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="cupo" class="form-label">Cupo</label>
+                    <input type="number" class="form-control" id="cupo" name="cupo" min="1">
+                </div>
             </div>
+            
             <div class="mb-3">
-                <label for="gestion" class="form-label">Gestion</label>
-                <input type="text" class="form-control" id="gestion" name="gestion">
-            </div>
-            <div class="mb-3">
-                <label for="periodo" class="form-label">Periodo</label>
-                <input type="text" class="form-control" id="periodo" name="periodo">
+                <label for="horario" class="form-label">Horario</label>
+                <textarea class="form-control" id="horario" name="horario" rows="3" placeholder="Ej: Lunes 08:00-10:00, Miércoles 10:00-12:00"></textarea>
             </div>
             
             <div class="d-flex justify-content-between">
-                <a href="{{url_for('asignacion.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('asignacion.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -43,4 +93,11 @@
         </form>
     </div>
 </div>
-{%endblock %}
+
+{% block extra_js %}
+<script>
+    // Establecer año actual por defecto
+    document.getElementById('gestion').value = new Date().getFullYear();
+</script>
+{% endblock %}
+{% endblock %}

@@ -10,6 +10,9 @@ rol_bp = Blueprint('rol', __name__, url_prefix='/roles')
 @permiso_requerido('ver_roles')
 def index():
     roles = Rol.query.order_by(Rol.nombre).all()
+    # Contar usuarios por cada rol
+    for rol in roles:
+        rol.usuarios_count = len(rol.usuarios)
     return render_template('rol/index.html', roles=roles)
 
 @rol_bp.route('/crear', methods=['GET', 'POST'])

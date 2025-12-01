@@ -1,19 +1,95 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Editar Asignacion - Instituto Ballivián{%endblock %}
-{%block page_title %}Editar Asignacion{%endblock %}
+{% block title %}Editar Asignación - Instituto Ballivián{% endblock %}
+{% block page_title %}Editar Asignación{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Editar Asignacion</h5>
+        <h5>Editar Asignación</h5>
     </div>
     <div class="card-body">
         <form method="POST">
-            <!-- Agregar campos del formulario aquí -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="materia_id" class="form-label">Materia *</label>
+                    <select class="form-select" id="materia_id" name="materia_id" required>
+                        <option value="">Seleccionar materia</option>
+                        {% for materia in materias %}
+                        <option value="{{ materia.id }}" {% if asignacion.materia_id == materia.id %}selected{% endif %}>
+                            {{ materia.nombre }} ({{ materia.codigo }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="docente_id" class="form-label">Docente *</label>
+                    <select class="form-select" id="docente_id" name="docente_id" required>
+                        <option value="">Seleccionar docente</option>
+                        {% for docente in docentes %}
+                        <option value="{{ docente.id }}" {% if asignacion.docente_id == docente.id %}selected{% endif %}>
+                            {{ docente.persona.nombre_completo }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="carrera_id" class="form-label">Carrera</label>
+                <select class="form-select" id="carrera_id" name="carrera_id">
+                    <option value="">Seleccionar carrera (opcional)</option>
+                    {% for carrera in carreras %}
+                    <option value="{{ carrera.id }}" {% if asignacion.carrera_id == carrera.id %}selected{% endif %}>
+                        {{ carrera.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="gestion" class="form-label">Gestión *</label>
+                    <input type="number" class="form-control" id="gestion" name="gestion" value="{{ asignacion.gestion }}" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="periodo" class="form-label">Periodo *</label>
+                    <select class="form-select" id="periodo" name="periodo" required>
+                        <option value="I" {% if asignacion.periodo == 'I' %}selected{% endif %}>Periodo I</option>
+                        <option value="II" {% if asignacion.periodo == 'II' %}selected{% endif %}>Periodo II</option>
+                        <option value="III" {% if asignacion.periodo == 'III' %}selected{% endif %}>Periodo III</option>
+                        <option value="Cuatrimestral" {% if asignacion.periodo == 'Cuatrimestral' %}selected{% endif %}>Cuatrimestral</option>
+                        <option value="Anual" {% if asignacion.periodo == 'Anual' %}selected{% endif %}>Anual</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="codigo_grupo" class="form-label">Código de Grupo</label>
+                    <input type="text" class="form-control" id="codigo_grupo" name="codigo_grupo" value="{{ asignacion.codigo_grupo }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="tipo_imparticion" class="form-label">Tipo de Impartición</label>
+                    <select class="form-select" id="tipo_imparticion" name="tipo_imparticion">
+                        <option value="Presencial" {% if asignacion.tipo_imparticion == 'Presencial' %}selected{% endif %}>Presencial</option>
+                        <option value="Virtual" {% if asignacion.tipo_imparticion == 'Virtual' %}selected{% endif %}>Virtual</option>
+                        <option value="Hibrido" {% if asignacion.tipo_imparticion == 'Hibrido' %}selected{% endif %}>Híbrido</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="cupo" class="form-label">Cupo</label>
+                    <input type="number" class="form-control" id="cupo" name="cupo" value="{{ asignacion.cupo }}">
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="horario" class="form-label">Horario</label>
+                <textarea class="form-control" id="horario" name="horario" rows="3">{{ asignacion.horario }}</textarea>
+            </div>
             
             <div class="d-flex justify-content-between">
-                <a href="{{url_for('asignacion.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('asignacion.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -23,4 +99,4 @@
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

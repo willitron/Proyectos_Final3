@@ -1,39 +1,93 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Crear Estudiante - Instituto Ballivián{%endblock %}
-{%block page_title %}Nuevo/a Estudiante{%endblock %}
+{% block title %}Crear Estudiante - Instituto Ballivián{% endblock %}
+{% block page_title %}Nuevo Estudiante{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Crear Nuevo/a Estudiante</h5>
+        <h5>Registrar Nuevo Estudiante</h5>
     </div>
     <div class="card-body">
         <form method="POST">
+            <div class="alert alert-info">
+                <strong>Nota:</strong> Primero debes crear la persona en el módulo de Personas.
+            </div>
             
             <div class="mb-3">
-                <label for="persona_id" class="form-label">Persona Id</label>
-                <input type="text" class="form-control" id="persona_id" name="persona_id">
+                <label for="persona_id" class="form-label">Persona *</label>
+                <select class="form-select" id="persona_id" name="persona_id" required>
+                    <option value="">Seleccionar persona</option>
+                    {% for persona in personas %}
+                    <option value="{{ persona.id }}">{{ persona.nombre_completo }} ({{ persona.nro_documento }})</option>
+                    {% endfor %}
+                </select>
             </div>
+            
             <div class="mb-3">
-                <label for="codigo_estudiante" class="form-label">Codigo Estudiante</label>
-                <input type="text" class="form-control" id="codigo_estudiante" name="codigo_estudiante">
+                <label for="codigo_estudiante" class="form-label">Código de Estudiante *</label>
+                <input type="text" class="form-control" id="codigo_estudiante" name="codigo_estudiante" required>
             </div>
-            <div class="mb-3">
-                <label for="nacionalidad" class="form-label">Nacionalidad</label>
-                <input type="text" class="form-control" id="nacionalidad" name="nacionalidad">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                    <input type="text" class="form-control" id="nacionalidad" name="nacionalidad" value="Boliviana">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="estado_civil" class="form-label">Estado Civil</label>
+                    <select class="form-select" id="estado_civil" name="estado_civil">
+                        <option value="Soltero" selected>Soltero</option>
+                        <option value="Casado">Casado</option>
+                        <option value="Viudo">Viudo</option>
+                        <option value="Divorciado">Divorciado</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="provincia" class="form-label">Provincia</label>
-                <input type="text" class="form-control" id="provincia" name="provincia">
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="departamento" class="form-label">Departamento</label>
+                    <input type="text" class="form-control" id="departamento" name="departamento">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="provincia" class="form-label">Provincia</label>
+                    <input type="text" class="form-control" id="provincia" name="provincia">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="zona" class="form-label">Zona</label>
+                    <input type="text" class="form-control" id="zona" name="zona">
+                </div>
             </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="colegio_egreso" class="form-label">Colegio de Egreso</label>
+                    <input type="text" class="form-control" id="colegio_egreso" name="colegio_egreso">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="anio_egreso" class="form-label">Año de Egreso</label>
+                    <input type="number" class="form-control" id="anio_egreso" name="anio_egreso" min="1950" max="2030">
+                </div>
+            </div>
+            
             <div class="mb-3">
-                <label for="departamento" class="form-label">Departamento</label>
-                <input type="text" class="form-control" id="departamento" name="departamento">
+                <label for="tipo_ingreso" class="form-label">Tipo de Ingreso</label>
+                <select class="form-select" id="tipo_ingreso" name="tipo_ingreso">
+                    <option value="Regular" selected>Regular</option>
+                    <option value="Traslado">Traslado</option>
+                    <option value="Libre">Libre</option>
+                </select>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="activo" name="activo" checked>
+                <label class="form-check-label" for="activo">Activo</label>
             </div>
             
             <div class="d-flex justify-content-between">
-                <a href="{{url_for('estudiante.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('estudiante.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -43,4 +97,4 @@
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

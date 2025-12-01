@@ -6,41 +6,78 @@
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Editar Materia</h5>
+        <h5>Editar Materia: {{ materia.nombre }}</h5>
     </div>
     <div class="card-body">
         <form method="POST">
-
-            <div class="mb-3">
-                <label for="codigo" class="form-label">Código</label>
-                <input type="text" class="form-control" id="codigo" name="codigo"
-                       value="{{ materia.codigo }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="codigo" class="form-label">Código *</label>
+                    <input type="text" class="form-control" id="codigo" name="codigo" value="{{ materia.codigo }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="carrera_id" class="form-label">Carrera</label>
+                    <select class="form-select" id="carrera_id" name="carrera_id">
+                        <option value="">Seleccionar carrera</option>
+                        {% for carrera in carreras %}
+                        <option value="{{ carrera.id }}" {% if materia.carrera_id == carrera.id %}selected{% endif %}>{{ carrera.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-
+            
             <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre"
-                       value="{{ materia.nombre }}">
+                <label for="nombre" class="form-label">Nombre de la Materia *</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ materia.nombre }}" required>
             </div>
-
+            
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripción</label>
-                <input type="text" class="form-control" id="descripcion" name="descripcion"
-                       value="{{ materia.descripcion }}">
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ materia.descripcion }}</textarea>
             </div>
-
-            <div class="mb-3">
-                <label for="carga_horaria" class="form-label">Carga Horaria</label>
-                <input type="text" class="form-control" id="carga_horaria" name="carga_horaria"
-                       value="{{ materia.carga_horaria }}">
+            
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="carga_horaria" class="form-label">Carga Horaria</label>
+                    <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" value="{{ materia.carga_horaria }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="horas_teoricas" class="form-label">Horas Teóricas</label>
+                    <input type="number" class="form-control" id="horas_teoricas" name="horas_teoricas" value="{{ materia.horas_teoricas }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="horas_practicas" class="form-label">Horas Prácticas</label>
+                    <input type="number" class="form-control" id="horas_practicas" name="horas_practicas" value="{{ materia.horas_practicas }}">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="creditos" class="form-label">Créditos</label>
+                    <input type="number" class="form-control" id="creditos" name="creditos" value="{{ materia.creditos }}">
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label for="horas_teoricas" class="form-label">Horas Teóricas</label>
-                <input type="text" class="form-control" id="horas_teoricas" name="horas_teoricas"
-                       value="{{ materia.horas_teoricas }}">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="semestre" class="form-label">Semestre</label>
+                    <input type="number" class="form-control" id="semestre" name="semestre" value="{{ materia.semestre }}" min="1" max="12">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="prerequisito_id" class="form-label">Prerequisito</label>
+                    <select class="form-select" id="prerequisito_id" name="prerequisito_id">
+                        <option value="">Sin prerequisito</option>
+                    </select>
+                </div>
             </div>
-
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="requerido_para_semestre" name="requerido_para_semestre" {% if materia.requerido_para_semestre %}checked{% endif %}>
+                <label class="form-check-label" for="requerido_para_semestre">Requerida para el semestre</label>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="activo" name="activo" {% if materia.activo %}checked{% endif %}>
+                <label class="form-check-label" for="activo">Activo</label>
+            </div>
+            
             <div class="d-flex justify-content-between">
                 <a href="{{ url_for('materia.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
@@ -49,7 +86,6 @@
                     <i class="bi bi-save"></i> Actualizar
                 </button>
             </div>
-
         </form>
     </div>
 </div>

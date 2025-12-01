@@ -1,25 +1,61 @@
-{%extends "base.html" %}
-
-{%block title %}Detalle Rol - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Rol{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Detalle Rol{% endblock %}
+{% block page_title %}Información de Rol{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Rol</h5>
-        <div>
-            {%if current_user.tiene_permiso('editar_rol') %}
-            <a href="{{url_for('rol.editar', id=item.id) }}" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            {%endif %}
-            <a href="{{url_for('rol.index') }}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-        </div>
+        <h5>{{ rol.nombre }}</h5>
+        <div>{% if current_user.tiene_permiso('editar_rol') %}<a href="{{ url_for('rol.editar', id=rol.id) }}"
+                class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Editar</a>{% endif %}<a
+                href="{{ url_for('rol.index') }}" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i>
+                Volver</a></div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <h6 class="text-muted">Información del Rol</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="20%">Nombre:</th>
+                        <td>{{ rol.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Descripción:</th>
+                        <td>{{ rol.descripcion or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Usuarios con este rol:</th>
+                        <td><span class="badge bg-secondary">{{ rol.usuarios|length }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Total de permisos:</th>
+                        <td><span class="badge bg-info">{{ rol.permisos|length }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de creación:</th>
+                        <td>{{ rol.creado_en|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6 class="text-muted">Permisos Asignados</h6>{% if rol.permisos %}<div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Permiso</th>
+                                <th>Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>{% for permiso in rol.permisos|sort(attribute='nombre') %}<tr>
+                                <td><span class="badge bg-secondary">{{ permiso.nombre }}</span></td>
+                                <td>{{ permiso.descripcion }}</td>
+                            </tr>{% endfor %}</tbody>
+                    </table>
+                </div>{% else %}<p class="text-muted">Este rol no tiene permisos asignados.</p>{% endif %}
+            </div>
+        </div>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

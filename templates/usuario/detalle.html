@@ -1,25 +1,77 @@
-{%extends "base.html" %}
-
-{%block title %}Detalle Usuario - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Usuario{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Detalle Usuario{% endblock %}
+{% block page_title %}Información de Usuario{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Usuario</h5>
-        <div>
-            {%if current_user.tiene_permiso('editar_usuario') %}
-            <a href="{{url_for('usuario.editar', id=item.id) }}" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            {%endif %}
-            <a href="{{url_for('usuario.index') }}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-        </div>
+        <h5>{{ usuario.username }}</h5>
+        <div>{% if current_user.tiene_permiso('editar_usuario') %}<a
+                href="{{ url_for('usuario.editar', id=usuario.id) }}" class="btn btn-warning btn-sm"><i
+                    class="bi bi-pencil"></i> Editar</a>{% endif %}<a href="{{ url_for('usuario.index') }}"
+                class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i> Volver</a></div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Información de Usuario</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Username:</th>
+                        <td>{{ usuario.username }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td>{{ usuario.email or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>{% if usuario.activo %}<span class="badge bg-success">Activo</span>{% else %}<span
+                                class="badge bg-secondary">Inactivo</span>{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <th>Último Login:</th>
+                        <td>{{ usuario.ultimo_login|format_datetime if usuario.ultimo_login else 'Nunca' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Registrado:</th>
+                        <td>{{ usuario.created_at|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Asociaciones</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Persona:</th>
+                        <td>{{ usuario.persona.nombre_completo if usuario.persona else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estudiante:</th>
+                        <td>{{ usuario.estudiante.codigo_estudiante if usuario.estudiante else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Docente:</th>
+                        <td>{{ usuario.docente.codigo_docente if usuario.docente else 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6 class="text-muted">Roles Asignados</h6>{% if usuario.roles %}<div>{% for rol in usuario.roles
+                    %}<span class="badge bg-primary me-2">{{ rol.nombre }}</span>{% endfor %}</div>{% else %}<p
+                    class="text-muted">Sin roles asignados</p>{% endif %}
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6 class="text-muted">Permisos</h6>{% set all_permisos = [] %}{% for rol in usuario.roles %}{% for
+                permiso in rol.permisos %}{% if permiso not in all_permisos %}{% set _ = all_permisos.append(permiso)
+                %}{% endif %}{% endfor %}{% endfor %}{% if all_permisos %}<div class="d-flex flex-wrap">{% for permiso
+                    in all_permisos %}<span class="badge bg-secondary me-1 mb-1">{{ permiso.nombre }}</span>{% endfor %}
+                </div>{% else %}<p class="text-muted">Sin permisos</p>{% endif %}
+            </div>
+        </div>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

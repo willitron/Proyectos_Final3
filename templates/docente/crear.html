@@ -1,39 +1,70 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Crear Docente - Instituto Ballivián{%endblock %}
-{%block page_title %}Nuevo/a Docente{%endblock %}
+{% block title %}Crear Docente - Instituto Ballivián{% endblock %}
+{% block page_title %}Nuevo Docente{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Crear Nuevo/a Docente</h5>
+        <h5>Registrar Nuevo Docente</h5>
     </div>
     <div class="card-body">
         <form method="POST">
+            <div class="alert alert-info">
+                <strong>Nota:</strong> Primero debes crear la persona en el módulo de Personas.
+            </div>
             
             <div class="mb-3">
-                <label for="persona_id" class="form-label">Persona Id</label>
-                <input type="text" class="form-control" id="persona_id" name="persona_id">
+                <label for="persona_id" class="form-label">Persona *</label>
+                <select class="form-select" id="persona_id" name="persona_id" required>
+                    <option value="">Seleccionar persona</option>
+                    {% for persona in personas %}
+                    <option value="{{ persona.id }}">{{ persona.nombre_completo }} ({{ persona.nro_documento }})</option>
+                    {% endfor %}
+                </select>
             </div>
+            
             <div class="mb-3">
-                <label for="codigo_docente" class="form-label">Codigo Docente</label>
-                <input type="text" class="form-control" id="codigo_docente" name="codigo_docente">
+                <label for="codigo_docente" class="form-label">Código de Docente *</label>
+                <input type="text" class="form-control" id="codigo_docente" name="codigo_docente" required>
             </div>
-            <div class="mb-3">
-                <label for="grado_academico" class="form-label">Grado Academico</label>
-                <input type="text" class="form-control" id="grado_academico" name="grado_academico">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="grado_academico" class="form-label">Grado Académico</label>
+                    <select class="form-select" id="grado_academico" name="grado_academico">
+                        <option value="">Seleccionar</option>
+                        <option value="Licenciatura">Licenciatura</option>
+                        <option value="Maestría">Maestría</option>
+                        <option value="Doctorado">Doctorado</option>
+                        <option value="Técnico Superior">Técnico Superior</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                    <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="fecha_ingreso" class="form-label">Fecha Ingreso</label>
-                <input type="text" class="form-control" id="fecha_ingreso" name="fecha_ingreso">
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="titulo_universitario" class="form-label">Título Universitario</label>
+                    <input type="text" class="form-control" id="titulo_universitario" name="titulo_universitario">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="fecha_nacimiento" class="form-label">Fecha Nacimiento</label>
-                <input type="text" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="activo" name="activo" checked>
+                <label class="form-check-label" for="activo">Activo</label>
             </div>
             
             <div class="d-flex justify-content-between">
-                <a href="{{url_for('docente.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('docente.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -43,4 +74,4 @@
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

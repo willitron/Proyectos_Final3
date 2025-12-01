@@ -1,16 +1,16 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Estudiante - Instituto Ballivián{%endblock %}
-{%block page_title %}Gestión de Estudiante{%endblock %}
+{% block title %}Estudiantes - Instituto Ballivián{% endblock %}
+{% block page_title %}Gestión de Estudiantes{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Listado de Estudiante</h4>
-    {%if current_user.tiene_permiso('crear_estudiante') %}
-    <a href="{{url_for('estudiante.crear') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Nuevo/a
+    <h4>Listado de Estudiantes</h4>
+    {% if current_user.tiene_permiso('crear_estudiante') %}
+    <a href="{{ url_for('estudiante.crear') }}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo Estudiante
     </a>
-    {%endif %}
+    {% endif %}
 </div>
 
 <div class="card">
@@ -19,46 +19,94 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Información</th>
+                        <th>Código</th>
+                        <th>Nombre Completo</th>
+                        <th>CI</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {%for item in estudiantes.items %}
+                    {% for estudiante in estudiantes.items %}
                     <tr>
-                        <td>{{item.id}}</td>
-                        <td>{{item}}</td>
-                        <td><span class="badge bg-success">Activo</span></td>
+                        <td>{{ estudiante.codigo_estudiante }}</td>
+                        <td>{{ estudiante.persona.nombre_completo }}</td>
+                        <td>{{ estudiante.persona.nro_documento }}</td>
+                        <td>
+                            {% if estudiante.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="btn-group btn-group-sm">
-                                <a href="{{url_for('estudiante.detalle', id=item.id) }}" class="btn btn-info">
+                                <a href="{{ url_for('estudiante.detalle', id=estudiante.id) }}" class="btn btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                {%if current_user.tiene_permiso('editar_estudiante') %}
-                                <a href="{{url_for('estudiante.editar', id=item.id) }}" class="btn btn-warning">
+                                {% if current_user.tiene_permiso('editar_estudiante') %}
+                                <a href="{{ url_for('estudiante.editar', id=estudiante.id) }}" class="btn btn-warning">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                {%endif %}
-                                {%if current_user.tiene_permiso('eliminar_estudiante') %}
-                                <form method="POST" action="{{url_for('estudiante.eliminar', id=item.id) }}" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                                {%endif %}
+                                {% endif %}
+                                {% if current_user.tiene_permiso('eliminar_estudiante') %}
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ estudiante.id }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="modal fade" id="deleteModal{{ estudiante.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Eliminación</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            ¿Está seguro de eliminar al estudiante "{{ estudiante.persona.nombre_completo }}"?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                            <form method="POST" action="{{ url_for('estudiante.eliminar', id=estudiante.id) }}">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>
-                    {%else %}
+                    {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">No hay registros</td>
+                        <td colspan="5" class="text-center">No hay estudiantes registrados</td>
                     </tr>
-                    {%endfor %}
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
+        
+        {% if estudiantes.pages > 1 %}
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if not estudiantes.has_prev %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('estudiante.index', page=estudiantes.prev_num) }}">Anterior</a>
+                </li>
+                {% for page_num in estudiantes.iter_pages() %}
+                    {% if page_num %}
+                        <li class="page-item {% if page_num == estudiantes.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('estudiante.index', page=page_num) }}">{{ page_num }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {% if not estudiantes.has_next %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('estudiante.index', page=estudiantes.next_num) }}">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

@@ -1,25 +1,83 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Detalle Asignacion - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Asignacion{%endblock %}
+{% block title %}Detalle Asignación - Instituto Ballivián{% endblock %}
+{% block page_title %}Información de Asignación{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Asignacion</h5>
+        <h5>Asignación: {{ asignacion.materia.nombre }}</h5>
         <div>
-            {%if current_user.tiene_permiso('editar_asignacion') %}
-            <a href="{{url_for('asignacion.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+            {% if current_user.tiene_permiso('editar_asignacion') %}
+            <a href="{{ url_for('asignacion.editar', id=asignacion.id) }}" class="btn btn-warning btn-sm">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            {%endif %}
-            <a href="{{url_for('asignacion.index') }}" class="btn btn-secondary btn-sm">
+            {% endif %}
+            <a href="{{ url_for('asignacion.index') }}" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Información de la Asignación</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Materia:</th>
+                        <td>{{ asignacion.materia.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Código Materia:</th>
+                        <td>{{ asignacion.materia.codigo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Docente:</th>
+                        <td>{{ asignacion.docente.persona.nombre_completo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Carrera:</th>
+                        <td>{{ asignacion.carrera.nombre if asignacion.carrera else 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Información Académica</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Gestión:</th>
+                        <td>{{ asignacion.gestion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Periodo:</th>
+                        <td><span class="badge bg-info">{{ asignacion.periodo }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>Código Grupo:</th>
+                        <td>{{ asignacion.codigo_grupo or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Tipo Impartición:</th>
+                        <td>{{ asignacion.tipo_imparticion }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cupo:</th>
+                        <td>{{ asignacion.cupo or 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        {% if asignacion.horario %}
+        <div class="row mt-3">
+            <div class="col-md-12">
+                <h6 class="text-muted">Horario</h6>
+                <div class="alert alert-light">
+                    {{ asignacion.horario }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

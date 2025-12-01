@@ -1,25 +1,106 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Detalle Docente - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Docente{%endblock %}
+{% block title %}Detalle Docente - Instituto Ballivián{% endblock %}
+{% block page_title %}Información de Docente{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Docente</h5>
+        <h5>{{ docente.persona.nombre_completo }}</h5>
         <div>
-            {%if current_user.tiene_permiso('editar_docente') %}
-            <a href="{{url_for('docente.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+            {% if current_user.tiene_permiso('editar_docente') %}
+            <a href="{{ url_for('docente.editar', id=docente.id) }}" class="btn btn-warning btn-sm">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            {%endif %}
-            <a href="{{url_for('docente.index') }}" class="btn btn-secondary btn-sm">
+            {% endif %}
+            <a href="{{ url_for('docente.index') }}" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Información Profesional</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Código Docente:</th>
+                        <td>{{ docente.codigo_docente }}</td>
+                    </tr>
+                    <tr>
+                        <th>CI:</th>
+                        <td>{{ docente.persona.nro_documento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Grado Académico:</th>
+                        <td>{{ docente.grado_academico or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Título Universitario:</th>
+                        <td>{{ docente.titulo_universitario or 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Información Administrativa</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Fecha de Ingreso:</th>
+                        <td>{{ docente.fecha_ingreso|format_date if docente.fecha_ingreso else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Nacimiento:</th>
+                        <td>{{ docente.fecha_nacimiento|format_date if docente.fecha_nacimiento else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            {% if docente.activo %}
+                                <span class="badge bg-success">Activo</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Inactivo</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Registrado:</th>
+                        <td>{{ docente.created_at|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h6 class="text-muted">Asignaciones</h6>
+                {% if docente.asignaciones %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Carrera</th>
+                                <th>Gestión</th>
+                                <th>Periodo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asig in docente.asignaciones %}
+                            <tr>
+                                <td>{{ asig.materia.nombre }}</td>
+                                <td>{{ asig.carrera.nombre if asig.carrera else 'N/A' }}</td>
+                                <td>{{ asig.gestion }}</td>
+                                <td>{{ asig.periodo }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No tiene asignaciones registradas.</p>
+                {% endif %}
+            </div>
+        </div>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

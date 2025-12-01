@@ -1,25 +1,72 @@
-{%extends "base.html" %}
-
-{%block title %}Detalle Nota - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Nota{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Detalle Nota{% endblock %}
+{% block page_title %}Información de Nota{% endblock %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Nota</h5>
-        <div>
-            {%if current_user.tiene_permiso('editar_nota') %}
-            <a href="{{url_for('nota.editar', id=item.id) }}" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            {%endif %}
-            <a href="{{url_for('nota.index') }}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-        </div>
+        <h5>Nota #{{ nota.id }}</h5>
+        <div>{% if current_user.tiene_permiso('editar_nota') %}<a href="{{ url_for('nota.editar', id=nota.id) }}"
+                class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Editar</a>{% endif %}<a
+                href="{{ url_for('nota.index') }}" class="btn btn-secondary btn-sm"><i class="bi bi-arrow-left"></i>
+                Volver</a></div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Información del Estudiante</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Estudiante:</th>
+                        <td>{{ nota.inscripcion.estudiante.persona.nombre_completo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Materia:</th>
+                        <td>{{ nota.asignacion.materia.nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Docente:</th>
+                        <td>{{ nota.asignacion.docente.persona.nombre_completo }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Calificaciones</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">1er Parcial:</th>
+                        <td>{{ nota.primer_parcial if nota.primer_parcial else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>2do Parcial:</th>
+                        <td>{{ nota.segundo_parcial if nota.segundo_parcial else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>3er Parcial:</th>
+                        <td>{{ nota.tercer_parcial if nota.tercer_parcial else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nota Final:</th>
+                        <td><strong class="text-{% if nota.nota_final >= 51 %}success{% else %}danger{% endif %}">{{
+                                nota.nota_final if nota.nota_final else '-' }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Promedio:</th>
+                        <td>{{ nota.promedio if nota.promedio else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td><span
+                                class="badge bg-{% if nota.estado == 'Cerrado' %}success{% elif nota.estado == 'Revisado' %}info{% else %}warning{% endif %}">{{
+                                nota.estado }}</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>{% if nota.observaciones %}<div class="row mt-3">
+            <div class="col-md-12">
+                <h6 class="text-muted">Observaciones</h6>
+                <p>{{ nota.observaciones }}</p>
+            </div>
+        </div>{% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

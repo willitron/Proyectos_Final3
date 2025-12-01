@@ -1,64 +1,80 @@
-{%extends "base.html" %}
-
-{%block title %}Nota - Instituto Ballivián{%endblock %}
-{%block page_title %}Gestión de Nota{%endblock %}
-
-{%block content %}
+{% extends "base.html" %}
+{% block title %}Notas{% endblock %}
+{% block page_title %}Gestión de Notas{% endblock %}
+{% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4>Listado de Nota</h4>
-    {%if current_user.tiene_permiso('crear_nota') %}
-    <a href="{{url_for('nota.crear') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Nuevo/a
-    </a>
-    {%endif %}
+    <h4>Listado de Notas</h4>{% if current_user.tiene_permiso('crear_nota') %}<a href="{{ url_for('nota.crear') }}"
+        class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nueva Nota</a>{% endif %}
 </div>
-
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Información</th>
+                        <th>Estudiante</th>
+                        <th>Materia</th>
+                        <th>1er Parcial</th>
+                        <th>2do Parcial</th>
+                        <th>3er Parcial</th>
+                        <th>Final</th>
                         <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {%for item in notas.items %}
-                    <tr>
-                        <td>{{item.id}}</td>
-                        <td>{{item}}</td>
-                        <td><span class="badge bg-success">Activo</span></td>
+                <tbody>{% for nota in notas.items %}<tr>
+                        <td>{{ nota.inscripcion.estudiante.persona.nombre_completo }}</td>
+                        <td>{{ nota.asignacion.materia.nombre }}</td>
+                        <td>{{ nota.primer_parcial if nota.primer_parcial else '-' }}</td>
+                        <td>{{ nota.segundo_parcial if nota.segundo_parcial else '-' }}</td>
+                        <td>{{ nota.tercer_parcial if nota.tercer_parcial else '-' }}</td>
+                        <td>{% if nota.nota_final %}<strong>{{ nota.nota_final }}</strong>{% else %}-{% endif %}</td>
+                        <td><span
+                                class="badge bg-{% if nota.estado == 'Cerrado' %}success{% elif nota.estado == 'Revisado' %}info{% else %}warning{% endif %}">{{
+                                nota.estado }}</span></td>
                         <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="{{url_for('nota.detalle', id=item.id) }}" class="btn btn-info">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                {%if current_user.tiene_permiso('editar_nota') %}
-                                <a href="{{url_for('nota.editar', id=item.id) }}" class="btn btn-warning">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                {%endif %}
-                                {%if current_user.tiene_permiso('eliminar_nota') %}
-                                <form method="POST" action="{{url_for('nota.eliminar', id=item.id) }}" style="display:inline;" onsubmit="return confirm('¿Está seguro?');">
-                                    <button type="submit" class="btn btn-danger">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                                {%endif %}
+                            <div class="btn-group btn-group-sm"><a href="{{ url_for('nota.detalle', id=nota.id) }}"
+                                    class="btn btn-info"><i class="bi bi-eye"></i></a>{% if
+                                current_user.tiene_permiso('editar_nota') %}<a
+                                    href="{{ url_for('nota.editar', id=nota.id) }}" class="btn btn-warning"><i
+                                        class="bi bi-pencil"></i></a>{% endif %}{% if
+                                current_user.tiene_permiso('eliminar_nota') %}<button type="button"
+                                    class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal{{ nota.id }}"><i class="bi bi-trash"></i></button>{%
+                                endif %}</div>
+                            <div class="modal fade" id="deleteModal{{ nota.id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmar Eliminación</h5><button type="button"
+                                                class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">¿Está seguro de eliminar esta nota?</div>
+                                        <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <form method="POST" action="{{ url_for('nota.eliminar', id=nota.id) }}">
+                                                <button type="submit" class="btn btn-danger">Eliminar</button></form>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </td>
-                    </tr>
-                    {%else %}
-                    <tr>
-                        <td colspan="4" class="text-center">No hay registros</td>
-                    </tr>
-                    {%endfor %}
-                </tbody>
+                    </tr>{% else %}<tr>
+                        <td colspan="8" class="text-center">No hay notas registradas</td>
+                    </tr>{% endfor %}</tbody>
             </table>
-        </div>
+        </div>{% if notas.pages > 1 %}<nav>
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if not notas.has_prev %}disabled{% endif %}"><a class="page-link"
+                        href="{{ url_for('nota.index', page=notas.prev_num) }}">Anterior</a></li>{% for page_num in
+                notas.iter_pages() %}{% if page_num %}<li
+                    class="page-item {% if page_num == notas.page %}active{% endif %}"><a class="page-link"
+                        href="{{ url_for('nota.index', page=page_num) }}">{{ page_num }}</a></li>{% else %}<li
+                    class="page-item disabled"><span class="page-link">...</span></li>{% endif %}{% endfor %}<li
+                    class="page-item {% if not notas.has_next %}disabled{% endif %}"><a class="page-link"
+                        href="{{ url_for('nota.index', page=notas.next_num) }}">Siguiente</a></li>
+            </ul>
+        </nav>{% endif %}
     </div>
 </div>
-{%endblock %}
+{% endblock %}

@@ -1,25 +1,117 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Detalle Persona - Instituto Ballivián{%endblock %}
-{%block page_title %}Detalle de Persona{%endblock %}
+{% block title %}Detalle Persona - Instituto Ballivián{% endblock %}
+{% block page_title %}Información de Persona{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5>Información de Persona</h5>
+        <h5>{{ persona.nombre_completo }}</h5>
         <div>
-            {%if current_user.tiene_permiso('editar_persona') %}
-            <a href="{{url_for('persona.editar', id=item.id) }}" class="btn btn-warning btn-sm">
+            {% if current_user.tiene_permiso('editar_persona') %}
+            <a href="{{ url_for('persona.editar', id=persona.id) }}" class="btn btn-warning btn-sm">
                 <i class="bi bi-pencil"></i> Editar
             </a>
-            {%endif %}
-            <a href="{{url_for('persona.index') }}" class="btn btn-secondary btn-sm">
+            {% endif %}
+            <a href="{{ url_for('persona.index') }}" class="btn btn-secondary btn-sm">
                 <i class="bi bi-arrow-left"></i> Volver
             </a>
         </div>
     </div>
     <div class="card-body">
-        <!-- Agregar detalles aquí -->
+        <div class="row">
+            <div class="col-md-6">
+                <h6 class="text-muted">Identificación</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Tipo Documento:</th>
+                        <td>{{ persona.tipo_documento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nro. Documento:</th>
+                        <td>{{ persona.nro_documento }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha Nacimiento:</th>
+                        <td>{{ persona.fecha_nacimiento|format_date if persona.fecha_nacimiento else 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Sexo:</th>
+                        <td>
+                            {% if persona.sexo == 'M' %}Masculino
+                            {% elif persona.sexo == 'F' %}Femenino
+                            {% elif persona.sexo == 'O' %}Otro
+                            {% else %}N/A{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Lugar Nacimiento:</th>
+                        <td>{{ persona.lugar_nacimiento or 'N/A' }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Contacto</h6>
+                <table class="table table-borderless">
+                    <tr>
+                        <th width="40%">Email:</th>
+                        <td>{{ persona.email or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Teléfono:</th>
+                        <td>{{ persona.telefono or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Dirección:</th>
+                        <td>{{ persona.direccion or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Registrado:</th>
+                        <td>{{ persona.created_at|format_datetime }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <h6 class="text-muted">Relaciones</h6>
+                <div class="row">
+                    {% if persona.estudiante %}
+                    <div class="col-md-4">
+                        <div class="alert alert-info">
+                            <strong><i class="bi bi-person-badge"></i> Estudiante</strong><br>
+                            Código: {{ persona.estudiante.codigo_estudiante }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if persona.docente %}
+                    <div class="col-md-4">
+                        <div class="alert alert-success">
+                            <strong><i class="bi bi-person-workspace"></i> Docente</strong><br>
+                            Código: {{ persona.docente.codigo_docente }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if persona.usuario %}
+                    <div class="col-md-4">
+                        <div class="alert alert-warning">
+                            <strong><i class="bi bi-person-gear"></i> Usuario</strong><br>
+                            Username: {{ persona.usuario.username }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if not persona.estudiante and not persona.docente and not persona.usuario %}
+                    <div class="col-md-12">
+                        <p class="text-muted">No tiene relaciones adicionales registradas.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

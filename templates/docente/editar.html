@@ -1,19 +1,61 @@
-{%extends "base.html" %}
+{% extends "base.html" %}
 
-{%block title %}Editar Docente - Instituto Ballivián{%endblock %}
-{%block page_title %}Editar Docente{%endblock %}
+{% block title %}Editar Docente - Instituto Ballivián{% endblock %}
+{% block page_title %}Editar Docente{% endblock %}
 
-{%block content %}
+{% block content %}
 <div class="card">
     <div class="card-header">
-        <h5>Editar Docente</h5>
+        <h5>Editar: {{ docente.persona.nombre_completo }}</h5>
     </div>
     <div class="card-body">
         <form method="POST">
-            <!-- Agregar campos del formulario aquí -->
+            <div class="mb-3">
+                <label class="form-label">Persona Asociada</label>
+                <input type="text" class="form-control" value="{{ docente.persona.nombre_completo }} ({{ docente.persona.nro_documento }})" disabled>
+            </div>
+            
+            <div class="mb-3">
+                <label for="codigo_docente" class="form-label">Código de Docente *</label>
+                <input type="text" class="form-control" id="codigo_docente" name="codigo_docente" value="{{ docente.codigo_docente }}" required>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="grado_academico" class="form-label">Grado Académico</label>
+                    <select class="form-select" id="grado_academico" name="grado_academico">
+                        <option value="">Seleccionar</option>
+                        <option value="Licenciatura" {% if docente.grado_academico == 'Licenciatura' %}selected{% endif %}>Licenciatura</option>
+                        <option value="Maestría" {% if docente.grado_academico == 'Maestría' %}selected{% endif %}>Maestría</option>
+                        <option value="Doctorado" {% if docente.grado_academico == 'Doctorado' %}selected{% endif %}>Doctorado</option>
+                        <option value="Técnico Superior" {% if docente.grado_academico == 'Técnico Superior' %}selected{% endif %}>Técnico Superior</option>
+                        <option value="Otro" {% if docente.grado_academico == 'Otro' %}selected{% endif %}>Otro</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                    <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" value="{{ docente.fecha_ingreso }}">
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="titulo_universitario" class="form-label">Título Universitario</label>
+                    <input type="text" class="form-control" id="titulo_universitario" name="titulo_universitario" value="{{ docente.titulo_universitario }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" value="{{ docente.fecha_nacimiento }}">
+                </div>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="activo" name="activo" {% if docente.activo %}checked{% endif %}>
+                <label class="form-check-label" for="activo">Activo</label>
+            </div>
             
             <div class="d-flex justify-content-between">
-                <a href="{{url_for('docente.index') }}" class="btn btn-secondary">
+                <a href="{{ url_for('docente.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Cancelar
                 </a>
                 <button type="submit" class="btn btn-primary">
@@ -23,4 +65,4 @@
         </form>
     </div>
 </div>
-{%endblock %}
+{% endblock %}

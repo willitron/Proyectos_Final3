@@ -11,18 +11,23 @@ reporte_bp = Blueprint('reporte', __name__, url_prefix='/reportes')
 @reporte_bp.route('/')
 @login_required
 def index():
-    return render_template('reporte/index.html')
+    """Página principal de reportes"""
+    return render_template('reporte/index.html', current_year=datetime.now().year)
 
 @reporte_bp.route('/estudiantes', methods=['GET', 'POST'])
 @login_required
 @permiso_requerido('ver_estudiantes')
 def reporte_estudiantes():
+    """Genera reporte de estudiantes"""
     if request.method == 'POST':
+        # Obtener filtros
         carrera_id = request.form.get('carrera_id')
         activo = request.form.get('activo')
         
+        # Consulta base
         query = Estudiante.query.join(Persona)
         
+        # Aplicar filtros
         if carrera_id:
             query = query.join(Inscripcion).filter(Inscripcion.carrera_id == carrera_id)
         
@@ -31,12 +36,14 @@ def reporte_estudiantes():
         
         estudiantes = query.all()
         
+        # Generar PDF
         filename = f'reportes/estudiantes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
         filepath = os.path.join('static', filename)
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         
         pdf = PDFGenerator(filepath, "REPORTE DE ESTUDIANTES")
         
+        # Metadatos
         pdf.add_metadata(
             generated_by=current_user.username,
             user_role=current_user.roles[0].nombre if current_user.roles else "N/A",
@@ -46,14 +53,17 @@ def reporte_estudiantes():
             }
         )
         
+        # Título
         pdf.add_title()
         
+        # Resumen
         pdf.add_summary_box({
             "Total de Estudiantes": len(estudiantes),
             "Activos": sum(1 for e in estudiantes if e.activo),
             "Inactivos": sum(1 for e in estudiantes if not e.activo)
         })
         
+        # Tabla de datos
         if estudiantes:
             data = [['Código', 'Nombre Completo', 'CI', 'Carrera', 'Estado']]
             
@@ -74,36 +84,44 @@ def reporte_estudiantes():
         else:
             pdf.add_paragraph("No se encontraron estudiantes con los filtros aplicados.")
         
+        # Firmas
         pdf.add_signature_section([
             "Secretaria General",
             "Director Académico"
         ])
         
+        # Construir PDF
         pdf.build()
         
         return send_file(filepath, as_attachment=True, download_name=f'reporte_estudiantes_{datetime.now().strftime("%Y%m%d")}.pdf')
     
+    # GET - Mostrar formulario
     carreras = Carrera.query.filter_by(activo=True).all()
-    return render_template('reporte/estudiantes.html', carreras=carreras)
+    return render_template('reporte/estudiantes.html', carreras=carreras, now=datetime.now())
 
 @reporte_bp.route('/notas/<int:inscripcion_id>')
 @login_required
 def reporte_notas_estudiante(inscripcion_id):
+    """Genera reporte de notas de un estudiante"""
     inscripcion = Inscripcion.query.get_or_404(inscripcion_id)
     
+    # Verificar permisos
     if not (current_user.tiene_permiso('ver_notas') or 
             (current_user.estudiante_id and current_user.estudiante_id == inscripcion.estudiante_id)):
         flash('No tienes permisos para ver este reporte.', 'danger')
         return redirect(url_for('main.dashboard'))
     
+    # Obtener notas
     notas = Nota.query.filter_by(inscripcion_id=inscripcion_id).join(Asignacion).all()
     
+    # Generar PDF
     filename = f'reportes/notas_{inscripcion.estudiante.codigo_estudiante}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
     filepath = os.path.join('static', filename)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     
     pdf = PDFGenerator(filepath, "CERTIFICADO DE NOTAS")
     
+    # Metadatos
     pdf.add_metadata(
         generated_by=current_user.username,
         user_role=current_user.roles[0].nombre if current_user.roles else "N/A",
@@ -115,8 +133,10 @@ def reporte_notas_estudiante(inscripcion_id):
         }
     )
     
+    # Título
     pdf.add_title()
     
+    # Información del estudiante
     pdf.add_section("Información del Estudiante")
     pdf.add_paragraph(f"""
         <b>Nombre:</b> {inscripcion.estudiante.persona.nombre_completo}<br/>
@@ -128,6 +148,7 @@ def reporte_notas_estudiante(inscripcion_id):
     
     pdf.add_spacer(0.3)
     
+    # Tabla de notas
     if notas:
         data = [['Materia', '1er Parcial', '2do Parcial', '3er Parcial', 'Final', 'Estado']]
         
@@ -157,6 +178,7 @@ def reporte_notas_estudiante(inscripcion_id):
         pdf.add_section("Registro de Calificaciones")
         pdf.add_table(data, col_widths=[2.5*72, 0.8*72, 0.8*72, 0.8*72, 0.8*72, 1*72])
         
+        # Resumen
         promedio_general = total_promedio / len(notas) if notas else 0
         pdf.add_summary_box({
             "Total Materias": len(notas),
@@ -167,11 +189,13 @@ def reporte_notas_estudiante(inscripcion_id):
     else:
         pdf.add_paragraph("No se registraron calificaciones para esta inscripción.")
     
+    # Firmas
     pdf.add_signature_section([
         "Secretaria Académica",
         "Director de Carrera"
     ])
     
+    # Construir PDF
     pdf.build()
     
     return send_file(filepath, as_attachment=True, download_name=f'certificado_notas_{inscripcion.estudiante.codigo_estudiante}.pdf')
@@ -180,14 +204,17 @@ def reporte_notas_estudiante(inscripcion_id):
 @login_required
 @permiso_requerido('ver_docentes')
 def reporte_docentes():
+    """Genera reporte de docentes con sus asignaciones"""
     docentes = Docente.query.filter_by(activo=True).join(Persona).all()
     
+    # Generar PDF
     filename = f'reportes/docentes_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
     filepath = os.path.join('static', filename)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     
     pdf = PDFGenerator(filepath, "REPORTE DE DOCENTES")
     
+    # Metadatos
     pdf.add_metadata(
         generated_by=current_user.username,
         user_role=current_user.roles[0].nombre if current_user.roles else "N/A",
@@ -196,12 +223,15 @@ def reporte_docentes():
         }
     )
     
+    # Título
     pdf.add_title()
     
+    # Resumen
     pdf.add_summary_box({
         "Total de Docentes Activos": len(docentes)
     })
     
+    # Tabla de docentes
     data = [['Código', 'Nombre Completo', 'Grado', 'Materias Asignadas']]
     
     for doc in docentes:
@@ -217,11 +247,13 @@ def reporte_docentes():
     pdf.add_section("Listado de Docentes")
     pdf.add_table(data, col_widths=[1*72, 2.5*72, 1.5*72, 1*72])
     
+    # Firmas
     pdf.add_signature_section([
         "Director Académico",
         "Recursos Humanos"
     ])
     
+    # Construir PDF
     pdf.build()
     
     return send_file(filepath, as_attachment=True, download_name=f'reporte_docentes_{datetime.now().strftime("%Y%m%d")}.pdf')
@@ -230,26 +262,33 @@ def reporte_docentes():
 @login_required
 @permiso_requerido('ver_carreras')
 def reporte_carreras():
+    """Genera reporte de carreras con estadísticas"""
     carreras = Carrera.query.filter_by(activo=True).all()
     
+    # Generar PDF
     filename = f'reportes/carreras_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
     filepath = os.path.join('static', filename)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     
     pdf = PDFGenerator(filepath, "REPORTE DE CARRERAS")
     
+    # Metadatos
     pdf.add_metadata(
         generated_by=current_user.username,
         user_role=current_user.roles[0].nombre if current_user.roles else "N/A"
     )
     
+    # Título
     pdf.add_title()
     
+    # Tabla de carreras
     data = [['Código', 'Nombre', 'Tipo', 'Estudiantes', 'Materias']]
     
+    total_estudiantes = 0
     for carrera in carreras:
         estudiantes = Inscripcion.query.filter_by(carrera_id=carrera.id).distinct(Inscripcion.estudiante_id).count()
         materias = Materia.query.filter_by(carrera_id=carrera.id, activo=True).count()
+        total_estudiantes += estudiantes
         
         data.append([
             carrera.codigo,
@@ -262,17 +301,19 @@ def reporte_carreras():
     pdf.add_section("Listado de Carreras")
     pdf.add_table(data, col_widths=[1*72, 2.5*72, 1*72, 1*72, 0.8*72])
     
-    total_estudiantes = sum([Inscripcion.query.filter_by(carrera_id=c.id).distinct(Inscripcion.estudiante_id).count() for c in carreras])
+    # Resumen
     pdf.add_summary_box({
         "Total Carreras Activas": len(carreras),
         "Total Estudiantes": total_estudiantes
     })
     
+    # Firmas
     pdf.add_signature_section([
         "Director General",
         "Secretaria Académica"
     ])
     
+    # Construir PDF
     pdf.build()
     
     return send_file(filepath, as_attachment=True, download_name=f'reporte_carreras_{datetime.now().strftime("%Y%m%d")}.pdf')
@@ -281,16 +322,19 @@ def reporte_carreras():
 @login_required
 @permiso_requerido('ver_inscripciones')
 def reporte_inscripciones():
+    """Genera reporte de inscripciones por gestión"""
     gestion = request.args.get('gestion', datetime.now().year)
     
     inscripciones = Inscripcion.query.filter_by(gestion=gestion).all()
     
+    # Generar PDF
     filename = f'reportes/inscripciones_{gestion}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf'
     filepath = os.path.join('static', filename)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     
     pdf = PDFGenerator(filepath, f"REPORTE DE INSCRIPCIONES - GESTIÓN {gestion}")
     
+    # Metadatos
     pdf.add_metadata(
         generated_by=current_user.username,
         user_role=current_user.roles[0].nombre if current_user.roles else "N/A",
@@ -300,8 +344,10 @@ def reporte_inscripciones():
         }
     )
     
+    # Título
     pdf.add_title()
     
+    # Tabla de inscripciones
     data = [['Estudiante', 'Carrera', 'Periodo', 'Estado', 'Fecha']]
     
     for insc in inscripciones:
@@ -316,19 +362,21 @@ def reporte_inscripciones():
     pdf.add_section(f"Inscripciones Gestión {gestion}")
     pdf.add_table(data, col_widths=[2*72, 1.8*72, 0.7*72, 1*72, 1*72])
     
+    # Resumen por estado
     estados = {}
     for insc in inscripciones:
         estados[insc.estado] = estados.get(insc.estado, 0) + 1
     
-    pdf.add_summary_box({
-        **estados,
-        "Total": len(inscripciones)
-    })
+    resumen = dict(estados)
+    resumen["Total"] = len(inscripciones)
+    pdf.add_summary_box(resumen)
     
+    # Firmas
     pdf.add_signature_section([
         "Secretaria General"
     ])
     
+    # Construir PDF
     pdf.build()
     
     return send_file(filepath, as_attachment=True, download_name=f'reporte_inscripciones_{gestion}.pdf')
