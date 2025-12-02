@@ -1,12 +1,3 @@
-"""
-Seed completo y funcional para Instituto Ballivian
-- Borra todas las tablas, crea tablas y carga datos de prueba.
-- Crea: Carreras, Materias, Docentes, Estudiantes, Secretarias, Roles, Permisos y Usuarios.
-- Evita errores de UNIQUE y de contexto de Flask.
-
-Ejecución: python3 seed_data2.py
-"""
-
 from faker import Faker
 import random
 from datetime import date
@@ -14,7 +5,6 @@ from sqlalchemy import text
 from app import create_app
 from models import db, Usuario, Rol, Permiso, Persona, Estudiante, Docente, Carrera, Materia, Asignacion, Inscripcion
 
-# Configuración
 fake = Faker(['es_ES'])
 
 N_ESTUDIANTES = 40
@@ -28,7 +18,6 @@ CARRERAS = [
     'Electrónica', 'Enfermería', 'Arquitectura', 'Derecho', 'Turismo'
 ]
 
-# Helpers para datos realistas
 def generar_ci():
     return str(random.randint(1000000, 99999999))
 
@@ -40,7 +29,6 @@ def email_from_name(nombre, apellido):
     dominio = random.choice(['institutoballivian.edu.bo', 'estudiante.edu.bo', 'docente.edu.bo'])
     return f"{local}@{dominio}"
 
-# Inicialización de datos
 def init_data():
     app = create_app()
     with app.app_context():

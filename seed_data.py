@@ -3,61 +3,58 @@ from datetime import datetime, date
 
 def init_data():
     
-    # Verificar si ya existen datos
     if Usuario.query.first():
         print("Los datos ya existen. Omitiendo inicialización.")
         return
     
     print("Iniciando carga de datos de prueba...")
     
-    # 1. Crear permisos
     permisos_data = [
-        # Carreras
         ('ver_carreras', 'Puede ver carreras'),
         ('crear_carrera', 'Puede crear carreras'),
         ('editar_carrera', 'Puede editar carreras'),
         ('eliminar_carrera', 'Puede eliminar carreras'),
-        # Materias
+        
         ('ver_materias', 'Puede ver materias'),
         ('crear_materia', 'Puede crear materias'),
         ('editar_materia', 'Puede editar materias'),
         ('eliminar_materia', 'Puede eliminar materias'),
-        # Personas
+        
         ('ver_personas', 'Puede ver personas'),
         ('crear_persona', 'Puede crear personas'),
         ('editar_persona', 'Puede editar personas'),
         ('eliminar_persona', 'Puede eliminar personas'),
-        # Estudiantes
+        
         ('ver_estudiantes', 'Puede ver estudiantes'),
         ('crear_estudiante', 'Puede crear estudiantes'),
         ('editar_estudiante', 'Puede editar estudiantes'),
         ('eliminar_estudiante', 'Puede eliminar estudiantes'),
-        # Docentes
+        
         ('ver_docentes', 'Puede ver docentes'),
         ('crear_docente', 'Puede crear docentes'),
         ('editar_docente', 'Puede editar docentes'),
         ('eliminar_docente', 'Puede eliminar docentes'),
-        # Asignaciones
+        
         ('ver_asignaciones', 'Puede ver asignaciones'),
         ('crear_asignacion', 'Puede crear asignaciones'),
         ('editar_asignacion', 'Puede editar asignaciones'),
         ('eliminar_asignacion', 'Puede eliminar asignaciones'),
-        # Inscripciones
+        
         ('ver_inscripciones', 'Puede ver inscripciones'),
         ('crear_inscripcion', 'Puede crear inscripciones'),
         ('editar_inscripcion', 'Puede editar inscripciones'),
         ('eliminar_inscripcion', 'Puede eliminar inscripciones'),
-        # Notas
+        
         ('ver_notas', 'Puede ver notas'),
         ('crear_nota', 'Puede crear notas'),
         ('editar_nota', 'Puede editar notas'),
         ('eliminar_nota', 'Puede eliminar notas'),
-        # Usuarios
+        
         ('ver_usuarios', 'Puede ver usuarios'),
         ('crear_usuario', 'Puede crear usuarios'),
         ('editar_usuario', 'Puede editar usuarios'),
         ('eliminar_usuario', 'Puede eliminar usuarios'),
-        # Roles
+        
         ('ver_roles', 'Puede ver roles'),
         ('crear_rol', 'Puede crear roles'),
         ('editar_rol', 'Puede editar roles'),
@@ -255,12 +252,6 @@ def init_data():
         db.session.add(carrera)
     
     db.session.commit()
-    print("Carreras creadas.")
+    print("Se creo todo crrectamente")
     
-    print("\n=== DATOS DE PRUEBA CARGADOS ===")
-    print("\nUsuarios creados:")
-    print("1. Admin: usuario='admin', password='admin123'")
-    print("2. Secretaria: usuario='secretaria', password='secretaria123'")
-    print("3. Docente: usuario='docente', password='docente123'")
-    print("4. Estudiante: usuario='estudiante', password='estudiante123'")
-    print("\n================================\n")
+   
