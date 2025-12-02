@@ -380,3 +380,11 @@ class ReporteGenerado(db.Model):
     
     def __repr__(self):
         return f'<ReporteGenerado {self.id}>'
+    
+
+
+
+
+
+
+    

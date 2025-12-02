@@ -70,7 +70,6 @@ def create_institutional_logo():
     text_y = 310
     
     draw.text((text_x + 2, text_y + 2), text_main, fill=(0, 0, 0, 128), font=font_large)
-    # Texto principal
     draw.text((text_x, text_y), text_main, fill=dorado, font=font_large)
     
     text_bottom = "INSTITUTO"

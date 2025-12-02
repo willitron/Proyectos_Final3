@@ -22,7 +22,6 @@ def create_app(config_class=Config):
     def load_user(user_id):
         return Usuario.query.get(int(user_id))
     
-    # Registrar blueprints
     from controllers.auth_controller import auth_bp
     from controllers.main_controller import main_bp
     from controllers.carrera_controller import carrera_bp
@@ -51,7 +50,6 @@ def create_app(config_class=Config):
     app.register_blueprint(rol_bp)
     app.register_blueprint(reporte_bp)
     
-    # Manejadores de errores
     @app.errorhandler(404)
     def not_found(error):
         return render_template('errors/404.html'), 404
@@ -65,7 +63,6 @@ def create_app(config_class=Config):
         db.session.rollback()
         return render_template('errors/500.html'), 500
     
-    # Filtros de plantilla
     from utils.helpers import format_date, format_datetime
     app.jinja_env.filters['format_date'] = format_date
     app.jinja_env.filters['format_datetime'] = format_datetime

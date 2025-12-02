@@ -11,19 +11,16 @@ def init_database():
     app = create_app()
     
     with app.app_context():
-        # Eliminar todas las tablas existentes
         print(" Eliminando tablas existentes...")
         db.drop_all()
         print("Tablas eliminadas")
         print()
         
-        # Crear todas las tablas
         print("Creando estructura de tablas...")
         db.create_all()
         print("Tablas creadas exitosamente")
         print()
         
-        # Mostrar tablas creadas
         inspector = db.inspect(db.engine)
         tables = inspector.get_table_names()
         
@@ -32,7 +29,6 @@ def init_database():
             print(f"   {i:2d}. {table}")
         print()
         
-        # Cargar datos de prueba
         print("Cargando datos de prueba...")
         init_data()
         
